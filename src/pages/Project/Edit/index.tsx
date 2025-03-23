@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select, Space, message } from 'antd';
+import { Form, Input, Button, Select, Space, message, Upload } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
+import { UploadOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import ReactMarkdown from 'react-markdown';
 import { projectService } from '../../../services/project';
+import { config } from '../../../config';
 
 const Container = styled.div`
   background: #fff;
@@ -33,12 +35,22 @@ const StyledForm = styled(Form)`
   }
 `;
 
+const ProjectImage = styled.img`
+  max-width: 200px;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+`;
+
 const ProjectEdit: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>('');
 
   const isEdit = !!id;
 
@@ -51,13 +63,24 @@ const ProjectEdit: React.FC = () => {
         form.setFieldsValue({
           title: project.title,
           description: project.description,
-          github: project.github,
-          demo: project.demo,
+          github: {
+            url: project.github.url,
+            disabled: project.github.disabled,
+            disabledReason: project.github.disabledReason,
+          },
+          demo: {
+            url: project.demo.url,
+            disabled: project.demo.disabled,
+            disabledReason: project.demo.disabledReason,
+          },
           status: project.status,
           features: project.features,
           techStack: project.techStack,
         });
         setContent(project.content);
+        if (project.imageUrl) {
+          setImageUrl(`${config.endpoint}${project.imageUrl}`);
+        }
       } catch (error) {
         console.error('获取项目详情失败:', error);
         message.error('获取项目详情失败');
@@ -70,16 +93,25 @@ const ProjectEdit: React.FC = () => {
   const handleSubmit = async (values: any) => {
     setLoading(true);
     try {
-      const data = {
-        ...values,
-        content,
-      };
+      const formData = new FormData();
+      formData.append('title', values.title);
+      formData.append('description', values.description);
+      formData.append('content', content);
+      formData.append('github', JSON.stringify(values.github));
+      formData.append('demo', JSON.stringify(values.demo));
+      formData.append('status', values.status);
+      formData.append('features', JSON.stringify(values.features));
+      formData.append('techStack', JSON.stringify(values.techStack));
+      
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
 
       if (isEdit) {
-        await projectService.update(Number(id), data);
+        await projectService.update(Number(id), formData);
         message.success('更新成功');
       } else {
-        await projectService.create(data);
+        await projectService.create(formData);
         message.success('创建成功');
       }
       navigate('/project/list');
@@ -95,6 +127,13 @@ const ProjectEdit: React.FC = () => {
     setContent(text);
   };
 
+  const handleImageChange = (info: any) => {
+    if (info.file.status === 'done') {
+      setImageFile(info.file.originFileObj);
+      setImageUrl(URL.createObjectURL(info.file.originFileObj));
+    }
+  };
+
   return (
     <Container>
       <HeaderContainer>
@@ -108,8 +147,16 @@ const ProjectEdit: React.FC = () => {
           status: 'developing',
           features: [],
           techStack: [],
-          github: { disabled: false },
-          demo: { disabled: false },
+          github: {
+            url: '',
+            disabled: false,
+            disabledReason: '',
+          },
+          demo: {
+            url: '',
+            disabled: false,
+            disabledReason: '',
+          },
         }}
       >
         <Form.Item
@@ -129,6 +176,31 @@ const ProjectEdit: React.FC = () => {
         </Form.Item>
 
         <Form.Item
+          label="项目图片"
+          required
+          tooltip="支持 jpg、jpeg、png、gif 格式，大小不超过 2MB"
+        >
+          <Upload
+            accept="image/*"
+            maxCount={1}
+            showUploadList={false}
+            customRequest={({ onSuccess }) => {
+              if (onSuccess) {
+                onSuccess({});
+              }
+            }}
+            onChange={handleImageChange}
+          >
+            {imageUrl ? (
+              <div style={{ marginBottom: 8 }}>
+                <ProjectImage src={imageUrl} alt="项目图片" />
+              </div>
+            ) : null}
+            <Button icon={<UploadOutlined />}>{imageUrl ? '更换图片' : '上传图片'}</Button>
+          </Upload>
+        </Form.Item>
+
+        <Form.Item
           name={['github', 'url']}
           label="GitHub 地址"
           rules={[{ required: true, message: '请输入 GitHub 地址' }]}
@@ -138,7 +210,6 @@ const ProjectEdit: React.FC = () => {
 
         <Form.Item
           name={['github', 'disabled']}
-          valuePropName="checked"
           label="禁用源码按钮"
         >
           <Select>
@@ -176,7 +247,6 @@ const ProjectEdit: React.FC = () => {
 
         <Form.Item
           name={['demo', 'disabled']}
-          valuePropName="checked"
           label="禁用演示按钮"
         >
           <Select>

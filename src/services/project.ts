@@ -5,6 +5,8 @@ export interface Project {
   title: string;
   description: string;
   content: string;
+  imageUrl: string;
+  imageName: string;
   tags: string[] | null;
   github: {
     url: string;
@@ -39,13 +41,21 @@ export const projectService = {
   },
 
   // 创建项目
-  create(data: Omit<Project, 'id' | 'createTime' | 'updateTime'>) {
-    return http.post<{ id: number }>('/project', data);
+  create(data: FormData) {
+    return http.post<{ id: number }>('/project', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   // 更新项目
-  update(id: number, data: Partial<Project>) {
-    return http.put<null>(`/project/${id}`, data);
+  update(id: number, data: FormData) {
+    return http.put<null>(`/project/${id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   // 删除项目

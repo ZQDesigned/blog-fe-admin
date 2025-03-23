@@ -150,7 +150,7 @@ const BlogList: React.FC = () => {
     },
   ];
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+  const handleTableChange = (pagination: any) => {
     fetchData(pagination.current, pagination.pageSize);
   };
 

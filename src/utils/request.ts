@@ -1,8 +1,9 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 import { message } from 'antd';
+import { config } from '../config';
 
 const request = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: config.api.baseURL,
   timeout: 10000,
 });
 

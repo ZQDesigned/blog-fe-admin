@@ -5,6 +5,7 @@ import { UserOutlined, LogoutOutlined, KeyOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { routes, getMenuItems } from '../../constants/routes';
 import { authService, UserInfo } from '../../services/auth';
+import type { MenuProps } from 'antd';
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -139,7 +140,7 @@ const MainLayout: React.FC = () => {
     }
   };
 
-  const userMenuItems = [
+  const userMenuItems: MenuProps['items'] = [
     {
       key: 'profile',
       icon: <UserOutlined />,
@@ -153,6 +154,7 @@ const MainLayout: React.FC = () => {
       onClick: () => navigate('/profile/password'),
     },
     {
+      key: 'divider',
       type: 'divider',
     },
     {

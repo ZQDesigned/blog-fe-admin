@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { authService } from '../../services/auth';
+import { authService } from "../../services/auth";
 
 const Container = styled.div`
   background: #fff;
@@ -23,29 +23,36 @@ const StyledForm = styled(Form)`
   max-width: 400px;
 `;
 
+interface FormValues {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 const ChangePassword: React.FC = () => {
   const navigate = useNavigate();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormValues>();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (values: { oldPassword: string; newPassword: string; confirmPassword: string }) => {
+  const onFinish = async (values: FormValues) => {
     if (values.newPassword !== values.confirmPassword) {
       message.error('两次输入的新密码不一致');
       return;
     }
 
-    setLoading(true);
     try {
+      setLoading(true);
       await authService.changePassword({
         oldPassword: values.oldPassword,
         newPassword: values.newPassword,
       });
-      message.success('密码修改成功，请重新登录');
+      message.success('密码修改成功');
+      form.resetFields();
       localStorage.removeItem('token');
       navigate('/login');
     } catch (error) {
       console.error('修改密码失败:', error);
-      message.error('修改密码失败');
+      message.error('修改密码失败，请重试');
     } finally {
       setLoading(false);
     }
@@ -58,9 +65,11 @@ const ChangePassword: React.FC = () => {
       </HeaderContainer>
       <Card>
         <StyledForm
+          // @ts-ignore
           form={form}
           layout="vertical"
-          onFinish={handleSubmit}
+          // @ts-ignore
+          onFinish={onFinish}
         >
           <Form.Item
             name="oldPassword"
@@ -110,4 +119,4 @@ const ChangePassword: React.FC = () => {
   );
 };
 
-export default ChangePassword; 
+export default ChangePassword;

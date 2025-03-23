@@ -5,6 +5,7 @@ import { EditOutlined, ArrowLeftOutlined, GithubOutlined, GlobalOutlined } from 
 import styled from '@emotion/styled';
 import ReactMarkdown from 'react-markdown';
 import { projectService, Project } from '../../../services/project';
+import { config } from '../../../config';
 import dayjs from 'dayjs';
 
 const Container = styled.div`
@@ -29,6 +30,14 @@ const Description = styled.p`
   margin: 0 0 16px;
   color: rgba(0, 0, 0, 0.45);
   font-size: 14px;
+`;
+
+const ProjectImage = styled.img`
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 `;
 
 const ContentContainer = styled.div`
@@ -124,7 +133,7 @@ const ProjectDetail: React.FC = () => {
             href={project.github.url}
             target="_blank"
             disabled={project.github.disabled}
-            title={project.github.disabledReason}
+            title={project.github.disabledReason || undefined}
           >
             查看源码
           </Button>
@@ -133,13 +142,21 @@ const ProjectDetail: React.FC = () => {
             href={project.demo.url}
             target="_blank"
             disabled={project.demo.disabled}
-            title={project.demo.disabledReason}
+            title={project.demo.disabledReason || undefined}
           >
             在线演示
           </Button>
         </Space>
         <Title>{project.title}</Title>
         <Description>{project.description}</Description>
+        {project.imageUrl && (
+          <div style={{ marginBottom: 24 }}>
+            <ProjectImage
+              src={`${config.endpoint}${project.imageUrl}`}
+              alt={project.title}
+            />
+          </div>
+        )}
         <Descriptions column={2}>
           <Descriptions.Item label="项目状态">
             <Tag color={statusColors[project.status]}>{statusTexts[project.status]}</Tag>
@@ -179,4 +196,4 @@ const ProjectDetail: React.FC = () => {
   );
 };
 
-export default ProjectDetail; 
+export default ProjectDetail;
