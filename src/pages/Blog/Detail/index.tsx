@@ -76,8 +76,6 @@ const BlogDetail: React.FC = () => {
       try {
         const data = await blogService.getDetail(Number(id));
         setBlog(data);
-        // 增加访问量
-        await blogService.increaseViewCount(Number(id));
       } catch (error) {
         console.error('获取文章详情失败:', error);
         message.error('获取文章详情失败');

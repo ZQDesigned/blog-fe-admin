@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Space, Tag, Skeleton, message, Descriptions } from 'antd';
 import { EditOutlined, ArrowLeftOutlined, GithubOutlined, GlobalOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import ReactMarkdown from 'react-markdown';
 import { projectService, Project } from '../../../services/project';
 import { config } from '../../../config';
 import dayjs from 'dayjs';
@@ -38,34 +37,6 @@ const ProjectImage = styled.img`
   border-radius: 4px;
   margin-bottom: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-`;
-
-const ContentContainer = styled.div`
-  font-size: 16px;
-  line-height: 1.8;
-  color: rgba(0, 0, 0, 0.85);
-
-  img {
-    max-width: 100%;
-  }
-
-  pre {
-    background-color: #f6f8fa;
-    padding: 16px;
-    border-radius: 4px;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-  }
-
-  blockquote {
-    margin: 0;
-    padding-left: 16px;
-    border-left: 4px solid #dfe2e5;
-    color: rgba(0, 0, 0, 0.65);
-  }
 `;
 
 const statusColors = {
@@ -184,13 +155,6 @@ const ProjectDetail: React.FC = () => {
             <li key={index}>{feature}</li>
           ))}
         </ul>
-      </div>
-
-      <div>
-        <h3>详细介绍</h3>
-        <ContentContainer>
-          <ReactMarkdown>{project.content}</ReactMarkdown>
-        </ContentContainer>
       </div>
     </Container>
   );

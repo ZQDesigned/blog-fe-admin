@@ -88,10 +88,5 @@ export const blogService = {
   // 删除文章
   delete(id: number) {
     return http.delete<null>(`/blog/${id}`);
-  },
-
-  // 增加文章访问量
-  increaseViewCount(id: number) {
-    return http.post<{ viewCount: number }>(`/blog/${id}/view`);
   }
 }; 

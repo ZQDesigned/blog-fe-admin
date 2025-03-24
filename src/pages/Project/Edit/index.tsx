@@ -3,9 +3,6 @@ import { Form, Input, Button, Select, Space, message, Upload } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UploadOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import MdEditor from 'react-markdown-editor-lite';
-import 'react-markdown-editor-lite/lib/index.css';
-import ReactMarkdown from 'react-markdown';
 import { projectService } from '../../../services/project';
 import { config } from '../../../config';
 
@@ -48,7 +45,6 @@ const ProjectEdit: React.FC = () => {
   const { id } = useParams();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [content, setContent] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>('');
 
@@ -77,7 +73,6 @@ const ProjectEdit: React.FC = () => {
           features: project.features,
           techStack: project.techStack,
         });
-        setContent(project.content);
         if (project.imageUrl) {
           setImageUrl(`${config.endpoint}${project.imageUrl}`);
         }
@@ -96,7 +91,6 @@ const ProjectEdit: React.FC = () => {
       const formData = new FormData();
       formData.append('title', values.title);
       formData.append('description', values.description);
-      formData.append('content', content);
       formData.append('github', JSON.stringify(values.github));
       formData.append('demo', JSON.stringify(values.demo));
       formData.append('status', values.status);
@@ -121,10 +115,6 @@ const ProjectEdit: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleEditorChange = ({ text }: { text: string }) => {
-    setContent(text);
   };
 
   const handleImageChange = (info: any) => {
@@ -304,17 +294,6 @@ const ProjectEdit: React.FC = () => {
           <Select mode="tags" placeholder="请输入技术栈，按回车键添加">
             <Select.Option value="tech1">技术1</Select.Option>
           </Select>
-        </Form.Item>
-
-        <Form.Item label="项目详细介绍" required>
-          <div className="editor-container">
-            <MdEditor
-              value={content}
-              renderHTML={(text) => <ReactMarkdown>{text}</ReactMarkdown>}
-              onChange={handleEditorChange}
-              style={{ height: '500px' }}
-            />
-          </div>
         </Form.Item>
 
         <Form.Item>

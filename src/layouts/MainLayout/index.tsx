@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Menu, Breadcrumb, Dropdown, Space, Avatar, message } from 'antd';
+import { Layout, Menu, Dropdown, Space, Avatar, message } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { UserOutlined, LogoutOutlined, KeyOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
@@ -79,13 +79,6 @@ const StyledContent = styled(Content)`
   min-height: 100%;
 `;
 
-const BreadcrumbContainer = styled.div`
-  margin-bottom: 16px;
-  background: #fff;
-  padding: 12px 24px;
-  border-radius: 4px;
-`;
-
 const StyledFooter = styled(Footer)`
   position: absolute;
   bottom: 0;
@@ -98,6 +91,8 @@ const StyledFooter = styled(Footer)`
   height: 50px;
   border-top: 1px solid #f0f0f0;
   margin: 0 24px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px;
 `;
 
 const UserContainer = styled.div`
@@ -165,35 +160,6 @@ const MainLayout: React.FC = () => {
     },
   ];
 
-  // 根据当前路径生成面包屑
-  const generateBreadcrumb = () => {
-    const pathSnippets = location.pathname.split('/').filter(i => i);
-    const breadcrumbItems = [
-      { title: 'Home', path: '/' },
-      ...pathSnippets.map((_, index) => {
-        const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
-        return {
-          title: pathSnippets[index].charAt(0).toUpperCase() + pathSnippets[index].slice(1),
-          path: url
-        };
-      })
-    ];
-
-    return (
-      <Breadcrumb>
-        {breadcrumbItems.map((item, index) => (
-          <Breadcrumb.Item key={item.path}>
-            {index === breadcrumbItems.length - 1 ? (
-              item.title
-            ) : (
-              <a onClick={() => navigate(item.path)}>{item.title}</a>
-            )}
-          </Breadcrumb.Item>
-        ))}
-      </Breadcrumb>
-    );
-  };
-
   return (
     <StyledLayout>
       <StyledHeader>
@@ -218,13 +184,12 @@ const MainLayout: React.FC = () => {
           />
         </StyledSider>
         <ContentWrapper>
-          <BreadcrumbContainer>
-            {generateBreadcrumb()}
-          </BreadcrumbContainer>
           <StyledContent>
             <Outlet />
           </StyledContent>
-          <StyledFooter>Footer</StyledFooter>
+          <StyledFooter>
+            LumiCMS 轻量、自由、优雅——一款专为极简内容管理打造的 CMS。
+          </StyledFooter>
         </ContentWrapper>
       </MainContainer>
     </StyledLayout>
