@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import { blogService } from '../../../services/blog';
 import { categoryService, Category } from '../../../services/category';
 import { tagService, Tag } from '../../../services/tag';
+import ImageUploader from '../../../components/ImageUploader';
 
 const Container = styled.div`
   background: #fff;
@@ -105,6 +106,7 @@ const BlogEdit: React.FC = () => {
 
   return (
     <Container>
+      <ImageUploader />
       <HeaderContainer>
         <Title>{isEdit ? '编辑文章' : '发布文章'}</Title>
       </HeaderContainer>
