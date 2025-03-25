@@ -29,3 +29,8 @@ deploy.config.sh
 *.pem
 id_rsa*
 *.key
+
+# Environment files
+.env
+.env.development
+.env.production
