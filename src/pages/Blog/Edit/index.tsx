@@ -36,14 +36,22 @@ const StyledForm = styled(Form)`
   }
 `;
 
+interface BlogFormData {
+  title: string;
+  categoryId: number;
+  tagIds: number[];
+  summary: string;
+}
+
 const BlogEdit: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<BlogFormData>();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [content, setContent] = useState('');
+  const [originalBlog, setOriginalBlog] = useState<any>(null);
 
   const isEdit = !!id;
 
@@ -59,6 +67,7 @@ const BlogEdit: React.FC = () => {
 
         if (isEdit) {
           const blog = await blogService.getDetail(Number(id));
+          setOriginalBlog(blog);
           form.setFieldsValue({
             title: blog.title,
             categoryId: blog.categoryId,
@@ -76,19 +85,32 @@ const BlogEdit: React.FC = () => {
     fetchData();
   }, [form, id, isEdit]);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: Partial<BlogFormData>) => {
+    if (!isEdit && !values.tagIds?.length) {
+      message.error('请选择文章标签');
+      return;
+    }
+
     setLoading(true);
     try {
-      const data = {
-        ...values,
-        content,
-      };
+      const submitData = isEdit
+        ? {
+            title: values.title ?? originalBlog.title,
+            categoryId: values.categoryId ?? originalBlog.categoryId,
+            tagIds: values.tagIds ?? originalBlog.tagIds,
+            summary: values.summary ?? originalBlog.summary,
+            content: content || originalBlog.content,
+          }
+        : {
+            ...values,
+            content,
+          };
 
       if (isEdit) {
-        await blogService.update(Number(id), data);
+        await blogService.update(Number(id), submitData);
         message.success('更新成功');
       } else {
-        await blogService.create(data);
+        await blogService.create(submitData);
         message.success('发布成功');
       }
       navigate('/blog/list');
@@ -114,7 +136,6 @@ const BlogEdit: React.FC = () => {
         form={form}
         layout="vertical"
         onFinish={handleSubmit}
-        initialValues={{ categoryId: undefined, tagIds: [] }}
       >
         <Form.Item
           name="title"
