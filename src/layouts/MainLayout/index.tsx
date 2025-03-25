@@ -163,7 +163,7 @@ const MainLayout: React.FC = () => {
   return (
     <StyledLayout>
       <StyledHeader>
-        <div>博客后台管理系统</div>
+        <div>LumiCMS 后台管理系统</div>
         <UserContainer>
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
             <Space>
@@ -196,4 +196,4 @@ const MainLayout: React.FC = () => {
   );
 };
 
-export default MainLayout; 
+export default MainLayout;

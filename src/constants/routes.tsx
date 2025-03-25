@@ -1,19 +1,28 @@
 import { MenuProps } from 'antd';
-import { 
+import {
   FileTextOutlined,
   ProjectOutlined,
   TagOutlined,
-  AppstoreOutlined
+  AppstoreOutlined,
+  DashboardOutlined
 } from '@ant-design/icons';
+import React from 'react';
 
 export interface RouteConfig {
   path: string;
   label: string;
   icon?: React.ReactNode;
   children?: RouteConfig[];
+  element?: React.LazyExoticComponent<React.ComponentType<any>>;
 }
 
 export const routes: RouteConfig[] = [
+  {
+    path: '/dashboard',
+    label: '数据大屏',
+    icon: <DashboardOutlined />,
+    element: React.lazy(() => import('../pages/Dashboard')),
+  },
   {
     path: '/blog',
     label: '文章管理',

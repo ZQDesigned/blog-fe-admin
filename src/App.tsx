@@ -15,6 +15,7 @@ import CategoryList from './pages/Category/List';
 import TagList from './pages/Tag/List';
 import Profile from './pages/Profile';
 import ChangePassword from './pages/Profile/Password';
+import Dashboard from './pages/Dashboard';
 
 const App: React.FC = () => {
   return (
@@ -38,7 +39,9 @@ const App: React.FC = () => {
               </AuthGuard>
             }
           >
-            <Route index element={<Navigate to="/blog/list" replace />} />
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            {/* 数据大屏 */}
+            <Route path="/dashboard" element={<Dashboard />} />
             {/* 博客相关路由 */}
             <Route path="/blog">
               <Route path="list" element={<BlogList />} />

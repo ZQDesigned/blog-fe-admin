@@ -38,7 +38,7 @@ const Login: React.FC = () => {
       const response = await authService.login(values);
       localStorage.setItem('token', response.token);
       message.success('登录成功');
-      navigate('/blog/list');
+      navigate('/dashboard');
     } catch (error) {
       console.error('登录失败:', error);
     }
