@@ -23,3 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 api.md
+
+# Deployment
+deploy.config.sh
+*.pem
+id_rsa*
+*.key
