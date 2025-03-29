@@ -30,16 +30,16 @@ const BlogList: React.FC = () => {
   const [data, setData] = useState<BlogPost[]>([]);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 12,
     total: 0,
   });
 
-  const fetchData = async (page = 1, size = 10) => {
+  const fetchData = async (page = 1, size = 12) => {
     setLoading(true);
     try {
       const response = await blogService.getList({
         page,
-        size,
+        pageSize: size,
         sort: 'createTime',
         order: 'desc',
       });
@@ -174,4 +174,4 @@ const BlogList: React.FC = () => {
   );
 };
 
-export default BlogList; 
+export default BlogList;

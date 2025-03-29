@@ -45,7 +45,7 @@ export interface BlogListResponse {
 
 export interface BlogListParams {
   page?: number;
-  size?: number;
+  pageSize?: number;
   sort?: string;
   order?: 'asc' | 'desc';
   tag?: string;
@@ -89,4 +89,4 @@ export const blogService = {
   delete(id: number) {
     return http.delete<null>(`/blog/${id}`);
   }
-}; 
+};
