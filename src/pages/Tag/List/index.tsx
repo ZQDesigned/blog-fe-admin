@@ -26,6 +26,8 @@ const Title = styled.h2`
 const TagList: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState<number | null>(null);
   const [data, setData] = useState<Tag[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
@@ -48,6 +50,7 @@ const TagList: React.FC = () => {
   }, []);
 
   const handleDelete = async (id: number) => {
+    setDeleteLoading(id);
     try {
       await tagService.delete(id);
       message.success('删除成功');
@@ -55,10 +58,13 @@ const TagList: React.FC = () => {
     } catch (error) {
       console.error('删除失败:', error);
       message.error('删除失败');
+    } finally {
+      setDeleteLoading(null);
     }
   };
 
   const handleModalOk = async () => {
+    setModalLoading(true);
     try {
       const values = await form.validateFields();
       if (editingTag) {
@@ -75,6 +81,8 @@ const TagList: React.FC = () => {
     } catch (error) {
       console.error('提交失败:', error);
       message.error('提交失败');
+    } finally {
+      setModalLoading(false);
     }
   };
 
@@ -142,6 +150,7 @@ const TagList: React.FC = () => {
             onConfirm={() => handleDelete(record.id)}
             okText="确定"
             cancelText="取消"
+            okButtonProps={{ loading: deleteLoading === record.id }}
           >
             <Button type="text" danger icon={<DeleteOutlined />}>
               删除
@@ -177,6 +186,7 @@ const TagList: React.FC = () => {
         onOk={handleModalOk}
         onCancel={handleModalCancel}
         destroyOnClose
+        confirmLoading={modalLoading}
       >
         <Form
           form={form}

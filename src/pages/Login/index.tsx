@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Button, Card, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
@@ -32,8 +32,10 @@ const LoginButton = styled(Button)`
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: LoginParams) => {
+    setLoading(true);
     try {
       const response = await authService.login(values);
       localStorage.setItem('token', response.token);
@@ -41,6 +43,9 @@ const Login: React.FC = () => {
       navigate('/dashboard');
     } catch (error) {
       console.error('登录失败:', error);
+      message.error('登录失败');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,7 +79,7 @@ const Login: React.FC = () => {
             />
           </Form.Item>
           <Form.Item>
-            <LoginButton type="primary" htmlType="submit" size="large">
+            <LoginButton type="primary" htmlType="submit" size="large" loading={loading}>
               登录
             </LoginButton>
           </Form.Item>

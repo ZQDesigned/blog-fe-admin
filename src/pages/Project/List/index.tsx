@@ -39,6 +39,7 @@ const statusTexts = {
 const ProjectList: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState<number | null>(null);
   const [data, setData] = useState<Project[]>([]);
 
   const fetchData = async () => {
@@ -59,6 +60,7 @@ const ProjectList: React.FC = () => {
   }, []);
 
   const handleDelete = async (id: number) => {
+    setDeleteLoading(id);
     try {
       await projectService.delete(id);
       message.success('删除成功');
@@ -66,6 +68,8 @@ const ProjectList: React.FC = () => {
     } catch (error) {
       console.error('删除失败:', error);
       message.error('删除失败');
+    } finally {
+      setDeleteLoading(null);
     }
   };
 
@@ -140,6 +144,7 @@ const ProjectList: React.FC = () => {
             onConfirm={() => handleDelete(record.id)}
             okText="确定"
             cancelText="取消"
+            okButtonProps={{ loading: deleteLoading === record.id }}
           >
             <Button type="text" danger icon={<DeleteOutlined />}>
               删除
