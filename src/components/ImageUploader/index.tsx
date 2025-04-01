@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Input, Space, Button, message, Dropdown, Tooltip } from 'antd';
-import { UploadOutlined, CopyOutlined, DragOutlined, DownOutlined } from '@ant-design/icons';
+import { Upload, Input, Space, Button, message, Dropdown, Tooltip, Progress } from 'antd';
+import { UploadOutlined, CopyOutlined, DragOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { uploadService } from '../../services/upload';
 import type { UploadProps } from 'antd';
@@ -65,11 +65,27 @@ const CopyButtonGroup = styled.div`
   }
 `;
 
+const ProgressContainer = styled.div`
+  margin-top: 16px;
+`;
+
+const ImagePreview = styled.div`
+  margin-top: 16px;
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+  }
+`;
+
 const ImageUploader: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [position, setPosition] = useState({ x: window.innerWidth - 324, y: 88 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -119,10 +135,26 @@ const ImageUploader: React.FC = () => {
     showUploadList: false,
     accept: 'image/*',
     customRequest: async (options) => {
-      const { file, onSuccess, onError } = options;
+      const { file, onSuccess, onError, onProgress } = options;
+      setUploading(true);
+      setUploadProgress(0);
 
       try {
+        // 模拟上传进度
+        const progressInterval = setInterval(() => {
+          setUploadProgress(prev => {
+            if (prev >= 90) {
+              clearInterval(progressInterval);
+              return prev;
+            }
+            return prev + 10;
+          });
+        }, 200);
+
         const response = await uploadService.uploadImage(file as File);
+        clearInterval(progressInterval);
+        setUploadProgress(100);
+        
         const fullUrl = uploadService.getImageUrl(response.url);
         setImageUrl(fullUrl);
         message.success('上传成功');
@@ -135,6 +167,11 @@ const ImageUploader: React.FC = () => {
         if (onError) {
           onError(new Error('上传失败'));
         }
+      } finally {
+        setTimeout(() => {
+          setUploading(false);
+          setUploadProgress(0);
+        }, 1000);
       }
     },
     beforeUpload: (file) => {
@@ -200,34 +237,56 @@ const ImageUploader: React.FC = () => {
         </DragHandle>
       </Header>
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Upload.Dragger {...uploadProps}>
-          <p className="ant-upload-drag-icon">
-            <UploadOutlined />
-          </p>
-          <p className="ant-upload-text">点击或拖拽文件到此区域上传</p>
-          <p className="ant-upload-hint">
-            支持单个图片上传，大小不超过 5MB
-          </p>
+        <Upload.Dragger {...uploadProps} disabled={uploading}>
+          {uploading ? (
+            <>
+              <p className="ant-upload-drag-icon">
+                <LoadingOutlined />
+              </p>
+              <p className="ant-upload-text">正在上传...</p>
+            </>
+          ) : (
+            <>
+              <p className="ant-upload-drag-icon">
+                <UploadOutlined />
+              </p>
+              <p className="ant-upload-text">点击或拖拽文件到此区域上传</p>
+              <p className="ant-upload-hint">
+                支持单个图片上传，大小不超过 5MB
+              </p>
+            </>
+          )}
         </Upload.Dragger>
 
-        {imageUrl && (
-          <UrlContainer>
-            <Space.Compact style={{ width: '100%' }}>
-              <Input value={imageUrl} readOnly />
-              <CopyButtonGroup>
-                <Tooltip title="复制为 Markdown 格式">
-                  <Button icon={<CopyOutlined />} onClick={handleCopyMarkdown} />
-                </Tooltip>
-                <Tooltip title="更多复制选项">
-                  <Dropdown menu={{ items: copyMenuItems }} placement="bottomRight">
-                    <Button>
-                      <DownOutlined />
-                    </Button>
-                  </Dropdown>
-                </Tooltip>
-              </CopyButtonGroup>
-            </Space.Compact>
-          </UrlContainer>
+        {uploading && (
+          <ProgressContainer>
+            <Progress percent={uploadProgress} />
+          </ProgressContainer>
+        )}
+
+        {imageUrl && !uploading && (
+          <>
+            <ImagePreview>
+              <img src={imageUrl} alt="已上传图片" />
+            </ImagePreview>
+            <UrlContainer>
+              <Space.Compact style={{ width: '100%' }}>
+                <Input value={imageUrl} readOnly />
+                <CopyButtonGroup>
+                  <Tooltip title="复制为 Markdown 格式">
+                    <Button icon={<CopyOutlined />} onClick={handleCopyMarkdown} />
+                  </Tooltip>
+                  <Tooltip title="更多复制选项">
+                    <Dropdown menu={{ items: copyMenuItems }} placement="bottomRight">
+                      <Button>
+                        <DownOutlined />
+                      </Button>
+                    </Dropdown>
+                  </Tooltip>
+                </CopyButtonGroup>
+              </Space.Compact>
+            </UrlContainer>
+          </>
         )}
       </Space>
     </Container>
