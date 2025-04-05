@@ -181,9 +181,9 @@ const ImageUploader: React.FC = () => {
         return false;
       }
 
-      const isLt5M = file.size / 1024 / 1024 < 5;
-      if (!isLt5M) {
-        message.error('图片大小不能超过 5MB！');
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        message.error('图片大小不能超过 10MB！');
         return false;
       }
 
@@ -252,7 +252,7 @@ const ImageUploader: React.FC = () => {
               </p>
               <p className="ant-upload-text">点击或拖拽文件到此区域上传</p>
               <p className="ant-upload-hint">
-                支持单个图片上传，大小不超过 5MB
+                支持单个图片上传，大小不超过 10MB
               </p>
             </>
           )}
