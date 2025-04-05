@@ -178,7 +178,7 @@ const MainLayout: React.FC = () => {
           <Menu
             mode="inline"
             defaultSelectedKeys={[location.pathname]}
-            defaultOpenKeys={['/blog', '/project', '/category', '/tag']}
+            defaultOpenKeys={['/home', '/blog', '/project', '/category', '/tag']}
             items={getMenuItems(routes)}
             onClick={handleMenuClick}
           />

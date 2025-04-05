@@ -8,6 +8,8 @@ import PageLoading from './components/PageLoading';
 const MainLayout = React.lazy(() => import('./layouts/MainLayout'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+const SectionSort = React.lazy(() => import('./pages/Home/SectionSort'));
+const Home = React.lazy(() => import('./pages/Home'));
 const BlogList = React.lazy(() => import('./pages/Blog/List'));
 const BlogEdit = React.lazy(() => import('./pages/Blog/Edit'));
 const BlogDetail = React.lazy(() => import('./pages/Blog/Detail'));
@@ -46,6 +48,11 @@ const App: React.FC = () => {
               <Route index element={<Navigate to="/dashboard" replace />} />
               {/* 数据大屏 */}
               <Route path="/dashboard" element={<Dashboard />} />
+              {/* 首页管理 */}
+              <Route path="/home">
+                <Route path="sections" element={<Home />} />
+                <Route path="sections/sort" element={<SectionSort />} />
+              </Route>
               {/* 博客相关路由 */}
               <Route path="/blog">
                 <Route path="list" element={<BlogList />} />

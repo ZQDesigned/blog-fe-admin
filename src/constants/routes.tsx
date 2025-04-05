@@ -4,7 +4,8 @@ import {
   ProjectOutlined,
   TagOutlined,
   AppstoreOutlined,
-  DashboardOutlined
+  DashboardOutlined,
+  HomeOutlined
 } from '@ant-design/icons';
 import React from 'react';
 
@@ -14,6 +15,7 @@ export interface RouteConfig {
   icon?: React.ReactNode;
   children?: RouteConfig[];
   element?: React.LazyExoticComponent<React.ComponentType<any>>;
+  hideInMenu?: boolean;
 }
 
 export const routes: RouteConfig[] = [
@@ -22,6 +24,24 @@ export const routes: RouteConfig[] = [
     label: '数据大屏',
     icon: <DashboardOutlined />,
     element: React.lazy(() => import('../pages/Dashboard')),
+  },
+  {
+    path: '/home',
+    label: '首页管理',
+    icon: <HomeOutlined />,
+    children: [
+      {
+        path: '/home/sections',
+        label: '区块管理',
+        element: React.lazy(() => import('../pages/Home')),
+      },
+      {
+        path: '/home/sections/sort',
+        label: '区块排序',
+        element: React.lazy(() => import('../pages/Home/SectionSort')),
+        hideInMenu: true,
+      }
+    ]
   },
   {
     path: '/blog',
