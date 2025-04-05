@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
-import { Form, Input, Select, InputNumber, Switch, Button, Space } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, Select, InputNumber, Switch, Button, Space, Modal } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import { Section } from '../../services/home';
-import { getSectionContentTemplate, stringifySectionContent } from '../../utils/section';
+import ContentEditor from './ContentEditor';
 
 interface SectionFormProps {
   initialValues?: Section;
@@ -17,37 +18,37 @@ const SectionForm: React.FC<SectionFormProps> = ({
   loading,
 }) => {
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    if (initialValues) {
-      const formData = {
-        ...initialValues,
-        content: typeof initialValues.content === 'string'
-          ? JSON.stringify(JSON.parse(initialValues.content), null, 2)
-          : JSON.stringify(initialValues.content, null, 2),
-      };
-      form.setFieldsValue(formData);
-    }
-  }, [initialValues, form]);
+  const [visualEditorVisible, setVisualEditorVisible] = useState(false);
 
   const handleTypeChange = (type: Section['type']) => {
-    const template = getSectionContentTemplate(type);
-    if (template) {
-      form.setFieldValue('content', JSON.stringify(template, null, 2));
-    }
+    form.setFieldValue('content', '');
   };
 
   const handleSubmit = (values: any) => {
-    try {
-      // 验证 content 是否为有效的 JSON
-      const content = JSON.parse(values.content);
-      onSubmit({
-        ...values,
-        content: stringifySectionContent(content),
-      });
-    } catch (error) {
-      console.error('内容格式错误:', error);
-    }
+    onSubmit(values);
+  };
+
+  const handleVisualEdit = () => {
+    setVisualEditorVisible(true);
+  };
+
+  const handleVisualEditCancel = () => {
+    setVisualEditorVisible(false);
+  };
+
+  const handleVisualEditOk = () => {
+    setVisualEditorVisible(false);
+  };
+
+  const getContentTypeLabel = (type: Section['type']) => {
+    const typeMap: Record<Section['type'], string> = {
+      banner: '横幅',
+      features: '特性',
+      skills: '技能',
+      timeline: '时间线',
+      contact: '联系方式',
+    };
+    return typeMap[type] || type;
   };
 
   return (
@@ -58,6 +59,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
       initialValues={{
         enabled: true,
         sortOrder: 0,
+        ...initialValues,
       }}
     >
       <Form.Item
@@ -91,7 +93,19 @@ const SectionForm: React.FC<SectionFormProps> = ({
       </Form.Item>
 
       <Form.Item
-        label="内容"
+        label={
+          <Space>
+            内容
+            <Button
+              type="link"
+              icon={<EditOutlined />}
+              onClick={handleVisualEdit}
+              size="small"
+            >
+              可视化编辑
+            </Button>
+          </Space>
+        }
         name="content"
         rules={[
           { required: true, message: '请输入内容' },
@@ -107,6 +121,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
             },
           },
         ]}
+        dependencies={['type']}
       >
         <Input.TextArea rows={10} placeholder="请输入 JSON 格式的内容" />
       </Form.Item>
@@ -139,8 +154,25 @@ const SectionForm: React.FC<SectionFormProps> = ({
           )}
         </Space>
       </Form.Item>
+
+      <Modal
+        title={`编辑${getContentTypeLabel(form.getFieldValue('type'))}内容`}
+        open={visualEditorVisible}
+        onCancel={handleVisualEditCancel}
+        onOk={handleVisualEditOk}
+        okText="确认"
+        cancelText="取消"
+        width={800}
+        destroyOnClose
+      >
+        <ContentEditor
+          type={form.getFieldValue('type')}
+          value={form.getFieldValue('content')}
+          onChange={(value) => form.setFieldValue('content', value)}
+        />
+      </Modal>
     </Form>
   );
 };
 
-export default SectionForm; 
+export default SectionForm;

@@ -49,7 +49,9 @@ export const getSectionContentTemplate = (type: Section['type']) => {
           items: [
             {
               name: '',
+              icon: '',
               level: 0,
+              description: ''
             },
           ],
         },

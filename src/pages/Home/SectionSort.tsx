@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, message, Tree, Button, Tag } from 'antd';
-import { HolderOutlined, SaveOutlined } from '@ant-design/icons';
+import { Card, message, Tree, Button, Tag, Space } from 'antd';
+import { HolderOutlined, SaveOutlined, UndoOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Section, getAllSections, updateSection } from '../../services/home';
 import type { DataNode, TreeProps } from 'antd/es/tree';
@@ -81,6 +81,7 @@ const ActionBar = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-bottom: 16px;
+  gap: 12px;
 `;
 
 // 定义包含必要 ID 的 Section 类型
@@ -107,6 +108,8 @@ const SectionSort: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isDataChanged, setIsDataChanged] = useState(false);
+  // 保存原始区块排序，用于重置更改
+  const [originalSections, setOriginalSections] = useState<SectionWithId[]>([]);
 
   // 将区块数据转换为树节点数据
   const convertSectionsToTreeData = (sections: SectionWithId[]): DataNode[] => {
@@ -151,6 +154,8 @@ const SectionSort: React.FC = () => {
       );
 
       setSections(sortedSections);
+      // 保存原始排序
+      setOriginalSections([...sortedSections]);
       setTreeData(convertSectionsToTreeData(sortedSections));
       setIsDataChanged(false);
     } catch (error) {
@@ -205,6 +210,15 @@ const SectionSort: React.FC = () => {
     setIsDataChanged(true);
   };
 
+  // 丢弃更改，恢复到原始排序
+  const handleDiscardChanges = () => {
+    // 恢复到原始排序
+    setSections([...originalSections]);
+    setTreeData(convertSectionsToTreeData([...originalSections]));
+    setIsDataChanged(false);
+    message.info('已恢复到原始排序');
+  };
+
   // 保存排序
   const handleSave = async () => {
     if (!isDataChanged) return;
@@ -227,10 +241,16 @@ const SectionSort: React.FC = () => {
       );
 
       message.success('排序更新成功');
+      
+      // 更新当前数据和原始数据
       setSections(updatedSections);
+      setOriginalSections([...updatedSections]);
+      setTreeData(convertSectionsToTreeData(updatedSections));
       setIsDataChanged(false);
     } catch (error) {
       message.error('排序更新失败');
+      // 发生错误时，刷新数据
+      fetchSections();
     } finally {
       setSaving(false);
     }
@@ -240,6 +260,12 @@ const SectionSort: React.FC = () => {
     <Container>
       {isDataChanged && (
         <ActionBar>
+          <Button
+            icon={<UndoOutlined />}
+            onClick={handleDiscardChanges}
+          >
+            丢弃更改
+          </Button>
           <Button
             type="primary"
             icon={<SaveOutlined />}
