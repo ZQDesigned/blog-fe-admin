@@ -47,13 +47,13 @@ const ContactForm: React.FC<ContactFormProps> = ({ value, onChange }) => {
                         style={{ marginBottom: 8 }}
                       >
                         <Select style={{ width: '100%' }} placeholder="类型">
-                          <Select.Option value="email">邮箱</Select.Option>
-                          <Select.Option value="phone">电话</Select.Option>
-                          <Select.Option value="github">GitHub</Select.Option>
-                          <Select.Option value="linkedin">LinkedIn</Select.Option>
-                          <Select.Option value="twitter">Twitter</Select.Option>
-                          <Select.Option value="wechat">微信</Select.Option>
-                          <Select.Option value="other">其他</Select.Option>
+                          <Select.Option value="Email">邮箱</Select.Option>
+                          <Select.Option value="Phone">电话</Select.Option>
+                          <Select.Option value="GitHub">GitHub</Select.Option>
+                          <Select.Option value="LinkedIn">LinkedIn</Select.Option>
+                          <Select.Option value="Twitter">Twitter</Select.Option>
+                          <Select.Option value="WeChat">微信</Select.Option>
+                          <Select.Option value="Other">其他</Select.Option>
                         </Select>
                       </Form.Item>
                       <Form.Item
@@ -110,4 +110,4 @@ const ContactForm: React.FC<ContactFormProps> = ({ value, onChange }) => {
   );
 };
 
-export default ContactForm; 
+export default ContactForm;
