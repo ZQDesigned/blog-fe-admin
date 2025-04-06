@@ -13,12 +13,15 @@ const SectionList: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingSection, setEditingSection] = useState<Section | undefined>();
   const [submitting, setSubmitting] = useState(false);
+  const [maxSortOrder, setMaxSortOrder] = useState(0);
 
   const fetchSections = async () => {
     setLoading(true);
     try {
       const response = await getAllSections();
       setSections(response);
+      const maxOrder = Math.max(...response.map(section => section.sortOrder), 0);
+      setMaxSortOrder(maxOrder);
     } catch (error) {
       message.error('获取区块列表失败');
     } finally {
@@ -52,6 +55,11 @@ const SectionList: React.FC = () => {
 
   const handleCreate = () => {
     setEditingSection(undefined);
+    const initialValues: Partial<Section> = {
+      sortOrder: maxSortOrder + 1,
+      enabled: true,
+    };
+    setEditingSection(initialValues as Section);
     setModalVisible(true);
   };
 
@@ -174,7 +182,7 @@ const SectionList: React.FC = () => {
 
       <Modal
         open={modalVisible}
-        title={editingSection ? '编辑区块' : '新建区块'}
+        title={editingSection?.id ? '编辑区块' : '新建区块'}
         initialValues={editingSection}
         onSubmit={handleModalSubmit}
         onCancel={handleModalCancel}
