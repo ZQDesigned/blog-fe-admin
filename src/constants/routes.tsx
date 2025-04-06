@@ -40,6 +40,11 @@ export const routes: RouteConfig[] = [
         label: '区块排序',
         element: React.lazy(() => import('../pages/Home/SectionSort')),
         hideInMenu: true,
+      },
+      {
+        path: '/home/sidebar',
+        label: '侧边栏管理',
+        element: React.lazy(() => import('../pages/Home/SidebarConfig')),
       }
     ]
   },
