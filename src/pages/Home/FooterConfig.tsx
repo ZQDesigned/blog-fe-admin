@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Form, Button, message } from 'antd';
-import { getFooterConfig, updateFooterConfig } from '../../services/footer';
+import { getFooterConfig, updateFooterConfig, FooterConfig as IFooterConfig } from '../../services/footer';
 import LinkEditor from '../../components/Footer/LinkEditor';
 import LinkList from '../../components/Footer/LinkList';
 
@@ -8,6 +8,7 @@ const FooterConfig: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [config, setConfig] = useState<IFooterConfig | null>(null);
 
   useEffect(() => {
     fetchConfig();
@@ -17,7 +18,10 @@ const FooterConfig: React.FC = () => {
     try {
       setLoading(true);
       const response = await getFooterConfig();
-      form.setFieldsValue(response);
+      setConfig(response);
+      if (isEditing) {
+        form.setFieldsValue(response);
+      }
     } catch (error) {
       message.error('获取页脚配置失败');
     } finally {
@@ -26,6 +30,7 @@ const FooterConfig: React.FC = () => {
   };
 
   const handleEdit = () => {
+    form.setFieldsValue(config);
     setIsEditing(true);
   };
 
@@ -77,9 +82,7 @@ const FooterConfig: React.FC = () => {
           </Form.Item>
         </Form>
       ) : (
-        form.getFieldValue('links') && (
-          <LinkList links={form.getFieldValue('links')} />
-        )
+        config?.links && <LinkList links={config.links} />
       )}
     </Card>
   );
