@@ -45,6 +45,11 @@ export const routes: RouteConfig[] = [
         path: '/home/sidebar',
         label: '侧边栏管理',
         element: React.lazy(() => import('../pages/Home/SidebarConfig')),
+      },
+      {
+        path: '/home/footer',
+        label: '页脚管理',
+        element: React.lazy(() => import('../pages/Home/FooterConfig')),
       }
     ]
   },
