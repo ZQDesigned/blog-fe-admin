@@ -2,6 +2,38 @@ import React from 'react';
 import { Form, Input, Button, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { getSectionContentTemplate } from '../../../utils/section';
+import styled from '@emotion/styled';
+
+const StyledInputGroup = styled(Input.Group)`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .ant-form-item {
+    margin-bottom: 8px;
+    flex: 1 1 auto;
+  }
+
+  .type-select {
+    min-width: 120px;
+    width: 120px;
+  }
+
+  .icon-input {
+    min-width: 100px;
+    width: 100px;
+  }
+
+  .value-input {
+    min-width: 200px;
+    flex-grow: 2;
+  }
+
+  .link-input {
+    min-width: 200px;
+    flex-grow: 1;
+  }
+`;
 
 interface ContactFormProps {
   value?: any[];
@@ -37,16 +69,15 @@ const ContactForm: React.FC<ContactFormProps> = ({ value, onChange }) => {
                     required={false}
                     style={{ marginBottom: 0 }}
                   >
-                    <Input.Group compact>
+                    <StyledInputGroup>
                       <Form.Item
                         name={[field.name, 'type']}
                         validateTrigger={['onChange', 'onBlur']}
                         rules={[
                           { required: true, message: '请选择类型' },
                         ]}
-                        style={{ marginBottom: 8 }}
                       >
-                        <Select style={{ width: '100%' }} placeholder="类型">
+                        <Select className="type-select" placeholder="类型">
                           <Select.Option value="Email">邮箱</Select.Option>
                           <Select.Option value="Phone">电话</Select.Option>
                           <Select.Option value="GitHub">GitHub</Select.Option>
@@ -62,9 +93,8 @@ const ContactForm: React.FC<ContactFormProps> = ({ value, onChange }) => {
                         rules={[
                           { required: true, whitespace: true, message: '请输入图标' },
                         ]}
-                        style={{ marginBottom: 8 }}
                       >
-                        <Input placeholder="图标" />
+                        <Input className="icon-input" placeholder="图标" />
                       </Form.Item>
                       <Form.Item
                         name={[field.name, 'value']}
@@ -72,18 +102,16 @@ const ContactForm: React.FC<ContactFormProps> = ({ value, onChange }) => {
                         rules={[
                           { required: true, whitespace: true, message: '请输入值' },
                         ]}
-                        style={{ marginBottom: 8 }}
                       >
-                        <Input placeholder="值" />
+                        <Input className="value-input" placeholder="值" />
                       </Form.Item>
                       <Form.Item
                         name={[field.name, 'link']}
                         validateTrigger={['onChange', 'onBlur']}
-                        style={{ marginBottom: 8 }}
                       >
-                        <Input placeholder="链接（可选）" />
+                        <Input className="link-input" placeholder="链接（可选）" />
                       </Form.Item>
-                    </Input.Group>
+                    </StyledInputGroup>
                   </Form.Item>
                 </div>
                 <MinusCircleOutlined

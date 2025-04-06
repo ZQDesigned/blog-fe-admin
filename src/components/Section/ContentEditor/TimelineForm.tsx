@@ -1,7 +1,43 @@
 import React from 'react';
-import { Form, Input, Button, DatePicker } from 'antd';
+import { Form, Input, Button, ColorPicker } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { getSectionContentTemplate } from '../../../utils/section';
+import styled from '@emotion/styled';
+
+const StyledInputGroup = styled(Input.Group)`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .ant-form-item {
+    margin-bottom: 8px;
+    flex: 1 1 auto;
+  }
+
+  .time-input {
+    min-width: 120px;
+    width: 120px;
+  }
+
+  .title-input {
+    min-width: 200px;
+    flex-grow: 2;
+  }
+
+  .description-input {
+    width: 100%;
+  }
+
+  .icon-input {
+    min-width: 100px;
+    width: 100px;
+  }
+
+  .color-picker {
+    min-width: 100px;
+    width: 100px;
+  }
+`;
 
 interface TimelineFormProps {
   value?: any[];
@@ -33,20 +69,19 @@ const TimelineForm: React.FC<TimelineFormProps> = ({ value, onChange }) => {
                 <div style={{ flex: 1, marginRight: 8 }}>
                   <Form.Item
                     {...field}
-                    label={`时间线项 ${index + 1}`}
+                    label={`时间线项目 ${index + 1}`}
                     required={false}
                     style={{ marginBottom: 0 }}
                   >
-                    <Input.Group compact>
+                    <StyledInputGroup>
                       <Form.Item
                         name={[field.name, 'date']}
                         validateTrigger={['onChange', 'onBlur']}
                         rules={[
-                          { required: true, whitespace: true, message: '请输入日期' },
+                          { required: true, whitespace: true, message: '请输入时间' },
                         ]}
-                        style={{ marginBottom: 8 }}
                       >
-                        <Input placeholder="日期" />
+                        <Input className="time-input" placeholder="时间" />
                       </Form.Item>
                       <Form.Item
                         name={[field.name, 'title']}
@@ -54,9 +89,8 @@ const TimelineForm: React.FC<TimelineFormProps> = ({ value, onChange }) => {
                         rules={[
                           { required: true, whitespace: true, message: '请输入标题' },
                         ]}
-                        style={{ marginBottom: 8 }}
                       >
-                        <Input placeholder="标题" />
+                        <Input className="title-input" placeholder="标题" />
                       </Form.Item>
                       <Form.Item
                         name={[field.name, 'description']}
@@ -64,25 +98,32 @@ const TimelineForm: React.FC<TimelineFormProps> = ({ value, onChange }) => {
                         rules={[
                           { required: true, whitespace: true, message: '请输入描述' },
                         ]}
-                        style={{ marginBottom: 8 }}
                       >
-                        <Input.TextArea placeholder="描述" rows={2} />
+                        <Input.TextArea className="description-input" placeholder="描述" rows={2} />
                       </Form.Item>
                       <Form.Item
                         name={[field.name, 'icon']}
                         validateTrigger={['onChange', 'onBlur']}
-                        style={{ marginBottom: 8 }}
                       >
-                        <Input placeholder="图标（可选）" />
+                        <Input className="icon-input" placeholder="图标（可选）" />
                       </Form.Item>
                       <Form.Item
                         name={[field.name, 'color']}
                         validateTrigger={['onChange', 'onBlur']}
-                        style={{ marginBottom: 8 }}
+                        rules={[
+                          { required: true, message: '请选择颜色' },
+                        ]}
+                        getValueFromEvent={(color) => {
+                          return color.toHexString();
+                        }}
                       >
-                        <Input placeholder="颜色（可选）" />
+                        <ColorPicker
+                          className="color-picker"
+                          showText
+                          format="hex"
+                        />
                       </Form.Item>
-                    </Input.Group>
+                    </StyledInputGroup>
                   </Form.Item>
                 </div>
                 <MinusCircleOutlined
@@ -99,7 +140,7 @@ const TimelineForm: React.FC<TimelineFormProps> = ({ value, onChange }) => {
                 block
                 icon={<PlusOutlined />}
               >
-                添加时间线项
+                添加时间线项目
               </Button>
             </Form.Item>
           </>
