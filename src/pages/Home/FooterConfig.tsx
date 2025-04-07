@@ -7,6 +7,7 @@ import LinkList from '../../components/Footer/LinkList';
 const FooterConfig: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [config, setConfig] = useState<IFooterConfig | null>(null);
 
@@ -41,6 +42,7 @@ const FooterConfig: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
+      setSubmitting(true);
       const values = await form.validateFields();
       await updateFooterConfig(values);
       message.success('更新成功');
@@ -48,6 +50,8 @@ const FooterConfig: React.FC = () => {
       fetchConfig();
     } catch (error) {
       message.error('更新失败');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -56,7 +60,7 @@ const FooterConfig: React.FC = () => {
       <Button onClick={handleCancel} style={{ marginRight: 8 }}>
         取消
       </Button>
-      <Button type="primary" onClick={handleSubmit}>
+      <Button type="primary" onClick={handleSubmit} loading={submitting}>
         保存
       </Button>
     </>
