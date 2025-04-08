@@ -33,7 +33,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({ value, onChange }) => {
     description: value.description || [''],
     milestones: value.milestones?.map(milestone => ({
       ...milestone,
-      date: milestone.date ? dayjs(milestone.date) : dayjs()
+      year: milestone.date ? dayjs(milestone.date) : dayjs()
     })) || []
   } : {
     description: [''],
@@ -46,7 +46,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({ value, onChange }) => {
       description: values.description,
       milestones: values.milestones?.map((milestone: any) => ({
         ...milestone,
-        date: milestone.date ? milestone.date.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD')
+        year: milestone.date ? milestone.date.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD')
       }))
     };
     onChange?.(formattedValues);
@@ -101,7 +101,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({ value, onChange }) => {
                   <Space direction="vertical" style={{ width: '100%' }}>
                     <Form.Item
                       {...field}
-                      name={[field.name, 'date']}
+                      name={[field.name, 'year']}
                       label="日期"
                       rules={[{ required: true, message: '请选择日期' }]}
                     >
@@ -126,10 +126,10 @@ const JourneyForm: React.FC<JourneyFormProps> = ({ value, onChange }) => {
                       <Input.TextArea rows={3} placeholder="请输入描述" />
                     </Form.Item>
 
-                    <Button 
-                      type="link" 
-                      danger 
-                      icon={<MinusCircleOutlined />} 
+                    <Button
+                      type="link"
+                      danger
+                      icon={<MinusCircleOutlined />}
                       onClick={() => remove(field.name)}
                     >
                       删除此里程碑
@@ -150,4 +150,4 @@ const JourneyForm: React.FC<JourneyFormProps> = ({ value, onChange }) => {
   );
 };
 
-export default JourneyForm; 
+export default JourneyForm;

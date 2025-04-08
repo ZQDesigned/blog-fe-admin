@@ -4,6 +4,7 @@ import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { AboutSection, getAllAboutSections, deleteAboutSection, updateAboutSection } from '../../services/about';
 import AboutSectionForm from './AboutSectionForm';
 import { formatDateTime } from '../../utils/date';
+import ImageUploader from '../../components/ImageUploader';
 
 const AboutSectionList: React.FC = () => {
   const [sections, setSections] = useState<AboutSection[]>([]);
@@ -11,6 +12,7 @@ const AboutSectionList: React.FC = () => {
   const [editingSection, setEditingSection] = useState<AboutSection | null>(null);
   const [formVisible, setFormVisible] = useState(false);
   const [nextSortOrder, setNextSortOrder] = useState(0);
+  const [showImageUploader, setShowImageUploader] = useState(false);
 
   const fetchSections = async () => {
     try {
@@ -64,6 +66,10 @@ const AboutSectionList: React.FC = () => {
     } catch (error) {
       message.error('更新状态失败');
     }
+  };
+
+  const toggleImageUploader = () => {
+    setShowImageUploader(!showImageUploader);
   };
 
   const columns = [
@@ -141,32 +147,41 @@ const AboutSectionList: React.FC = () => {
   ];
 
   return (
-    <Card
-      title="区块管理"
-      extra={
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-          添加区块
-        </Button>
-      }
-    >
-      <Table
-        columns={columns}
-        dataSource={sections}
-        rowKey="id"
-        loading={loading}
-        pagination={false}
-      />
-      <AboutSectionForm
-        visible={formVisible}
-        section={editingSection}
-        nextSortOrder={nextSortOrder}
-        onCancel={() => setFormVisible(false)}
-        onSuccess={() => {
-          setFormVisible(false);
-          fetchSections();
-        }}
-      />
-    </Card>
+    <>
+      <Card
+        title="区块管理"
+        extra={
+          <Space>
+            <Button onClick={toggleImageUploader}>
+              {showImageUploader ? '隐藏图片上传' : '显示图片上传'}
+            </Button>
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+              添加区块
+            </Button>
+          </Space>
+        }
+      >
+        <Table
+          columns={columns}
+          dataSource={sections}
+          rowKey="id"
+          loading={loading}
+          pagination={false}
+        />
+        <AboutSectionForm
+          visible={formVisible}
+          section={editingSection}
+          nextSortOrder={nextSortOrder}
+          onCancel={() => setFormVisible(false)}
+          onSuccess={() => {
+            setFormVisible(false);
+            fetchSections();
+          }}
+        />
+      </Card>
+      
+      {showImageUploader && <ImageUploader />}
+    </>
   );
 };
 
