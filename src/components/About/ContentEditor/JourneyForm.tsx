@@ -1,8 +1,7 @@
 import React from 'react';
-import { Form, Input, Button, DatePicker, Space } from 'antd';
+import { Form, Input, Button, Space } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import dayjs from 'dayjs';
 
 const StyledForm = styled(Form)`
   .ant-form-item {
@@ -31,10 +30,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({ value, onChange }) => {
 
   const initialValues = value ? {
     description: value.description || [''],
-    milestones: value.milestones?.map(milestone => ({
-      ...milestone,
-      year: milestone.date ? dayjs(milestone.date) : dayjs()
-    })) || []
+    milestones: value.milestones || []
   } : {
     description: [''],
     milestones: []
@@ -44,10 +40,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({ value, onChange }) => {
     const values = form.getFieldsValue();
     const formattedValues = {
       description: values.description,
-      milestones: values.milestones?.map((milestone: any) => ({
-        ...milestone,
-        year: milestone.date ? milestone.date.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD')
-      }))
+      milestones: values.milestones
     };
     onChange?.(formattedValues);
   };
@@ -103,9 +96,10 @@ const JourneyForm: React.FC<JourneyFormProps> = ({ value, onChange }) => {
                       {...field}
                       name={[field.name, 'year']}
                       label="日期"
-                      rules={[{ required: true, message: '请选择日期' }]}
+                      rules={[{ required: true, message: '请输入日期' }]}
+                      extra="请使用 YYYY-MM-DD 格式，例如 2022-01-01"
                     >
-                      <DatePicker style={{ width: '100%' }} />
+                      <Input placeholder="请输入日期，例如 2022-01-01" style={{ width: '100%' }} />
                     </Form.Item>
 
                     <Form.Item
