@@ -42,6 +42,11 @@ export const updateSection = (id: number, data: Partial<Section>) => {
   return request.put<Section>(`/home/sections/${id}`, data);
 };
 
+// 删除区块
+export const deleteSection = (id: number) => {
+  return request.delete<null>(`/home/sections/${id}`);
+};
+
 // 获取网站元数据
 export const getWebsiteMeta = () => {
   return request.get<WebsiteMeta>('/home/meta');

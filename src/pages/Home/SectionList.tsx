@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Button, Space, Switch, message } from 'antd';
+import { Table, Card, Button, Space, Switch, message, Popconfirm } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { Section, getAllSections, updateSection, createSection, getSection } from '../../services/home';
+import { Section, getAllSections, updateSection, createSection, getSection, deleteSection } from '../../services/home';
 import { formatDateTime } from '../../utils/date';
 import Modal from '../../components/Section/Modal';
 import ImageUploader from '../../components/ImageUploader';
-import { DragOutlined } from '@ant-design/icons';
+import { DragOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 const SectionList: React.FC = () => {
   const [sections, setSections] = useState<Section[]>([]);
@@ -50,6 +50,16 @@ const SectionList: React.FC = () => {
       setModalVisible(true);
     } catch (error) {
       message.error('获取区块详情失败');
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteSection(id);
+      message.success('删除成功');
+      fetchSections();
+    } catch (error) {
+      message.error('删除失败');
     }
   };
 
@@ -143,13 +153,27 @@ const SectionList: React.FC = () => {
           <Button
             type="link"
             size="small"
+            icon={<EditOutlined />}
             onClick={() => handleEdit(record.id!)}
           >
             编辑
           </Button>
-          <Button type="link" size="small">
-            预览
-          </Button>
+          <Popconfirm
+            title="确定要删除这个区块吗？"
+            description="删除后不可恢复，请确认是否继续。"
+            onConfirm={() => handleDelete(record.id!)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <Button
+              type="link"
+              danger
+              size="small"
+              icon={<DeleteOutlined />}
+            >
+              删除
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
