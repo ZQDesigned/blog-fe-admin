@@ -5,7 +5,8 @@ import {
   TagOutlined,
   AppstoreOutlined,
   DashboardOutlined,
-  HomeOutlined
+  HomeOutlined,
+  UserOutlined
 } from '@ant-design/icons';
 import React from 'react';
 
@@ -50,6 +51,24 @@ export const routes: RouteConfig[] = [
         path: '/home/footer',
         label: '页脚管理',
         element: React.lazy(() => import('../pages/Home/FooterConfig')),
+      }
+    ]
+  },
+  {
+    path: '/about',
+    label: '关于我',
+    icon: <UserOutlined />,
+    children: [
+      {
+        path: '/about/sections',
+        label: '区块管理',
+        element: React.lazy(() => import('../pages/About/AboutSectionList')),
+      },
+      {
+        path: '/about/sections/sort',
+        label: '区块排序',
+        element: React.lazy(() => import('../pages/About/AboutSectionSort')),
+        hideInMenu: true,
       }
     ]
   },

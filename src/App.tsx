@@ -12,6 +12,8 @@ const SectionSort = React.lazy(() => import('./pages/Home/SectionSort'));
 const Home = React.lazy(() => import('./pages/Home'));
 const SidebarConfig = React.lazy(() => import('./pages/Home/SidebarConfig'));
 const FooterConfig = React.lazy(() => import('./pages/Home/FooterConfig'));
+const AboutSectionList = React.lazy(() => import('./pages/About/AboutSectionList'));
+const AboutSectionSort = React.lazy(() => import('./pages/About/AboutSectionSort'));
 const BlogList = React.lazy(() => import('./pages/Blog/List'));
 const BlogEdit = React.lazy(() => import('./pages/Blog/Edit'));
 const BlogDetail = React.lazy(() => import('./pages/Blog/Detail'));
@@ -56,6 +58,11 @@ const App: React.FC = () => {
                 <Route path="sections/sort" element={<SectionSort />} />
                 <Route path="sidebar" element={<SidebarConfig />} />
                 <Route path="footer" element={<FooterConfig />} />
+              </Route>
+              {/* 关于我 */}
+              <Route path="/about">
+                <Route path="sections" element={<AboutSectionList />} />
+                <Route path="sections/sort" element={<AboutSectionSort />} />
               </Route>
               {/* 博客相关路由 */}
               <Route path="/blog">
